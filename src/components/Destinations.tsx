@@ -10,8 +10,7 @@ const destinations = [
     subtitle: "La Belle Epoque",
     description:
       "Vivez l'effervescence de l'Exposition Universelle et assistez a l'inauguration de la Tour Eiffel. Plongez dans le Paris de la fin du XIXe siecle.",
-    image:
-      "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073",
+    image: "/images/paris1889.png",
     period: "XIXe siecle",
     duration: "3-7 jours",
     highlights: ["Tour Eiffel", "Exposition Universelle", "Moulin Rouge"],
@@ -23,8 +22,7 @@ const destinations = [
     subtitle: "-65 Millions d'annees",
     description:
       "Explorez un monde primitif peuple de dinosaures. Une aventure unique au coeur de la prehistoire, en toute securite.",
-    image:
-      "https://images.unsplash.com/photo-1519880772-93ef5a72e06b?q=80&w=2070",
+    image: "/images/cretace.png",
     period: "Prehistoire",
     duration: "1-3 jours",
     highlights: ["T-Rex", "Pterodactyles", "Nature primitive"],
@@ -36,8 +34,7 @@ const destinations = [
     subtitle: "La Renaissance",
     description:
       "Rencontrez les plus grands artistes de la Renaissance. De Michel-Ange a Leonard de Vinci, vivez l'age d'or de l'art italien.",
-    image:
-      "https://images.unsplash.com/photo-1543429258-3ba762a57e20?q=80&w=2070",
+    image: "/images/florence1504.png",
     period: "Renaissance",
     duration: "5-10 jours",
     highlights: ["Michel-Ange", "Leonard de Vinci", "Medicis"],
@@ -134,13 +131,14 @@ export default function Destinations() {
                     </span>
                   </div>
 
-                  <motion.button
+                  <motion.a
+                    href="#reservation"
                     className="flex items-center gap-2 text-[#d4af37] font-medium group/btn"
                     whileHover={{ x: 5 }}
                   >
-                    Decouvrir
+                    Reserver
                     <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-                  </motion.button>
+                  </motion.a>
                 </div>
               </div>
             </motion.div>
@@ -156,16 +154,17 @@ export default function Destinations() {
           className="text-center mt-16"
         >
           <p className="text-gray-400 mb-6">
-            Besoin d&apos;aide pour choisir ? Notre assistant IA est la pour
-            vous guider.
+            Pas sur de votre choix ? Faites notre quiz pour trouver votre
+            destination ideale.
           </p>
-          <motion.button
-            className="btn-gold"
+          <motion.a
+            href="#quiz"
+            className="btn-gold inline-block"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Parler a notre assistant
-          </motion.button>
+            Trouver ma destination
+          </motion.a>
         </motion.div>
       </div>
     </section>

@@ -44,6 +44,17 @@ Webapp interactive pour une agence de voyage temporel fictive, creee avec IA gen
 - FAQ automatisee (prix, securite, reservations)
 - Interface de chat moderne avec animations
 
+### Quiz de Recommandation
+- 4 questions pour determiner la destination ideale
+- Algorithme de scoring personnalise
+- Resultat avec recommandation detaillee
+
+### Formulaire de Reservation
+- Selection destination + date + nombre de voyageurs
+- Validation des champs en temps reel
+- Recapitulatif avec calcul du prix total
+- Confirmation de demande de devis
+
 ### Section A Propos
 - Presentation de l'agence
 - Statistiques cles
@@ -133,10 +144,10 @@ Tu connais parfaitement : Paris 1889, Cretace -65M, Florence 1504
 
 ## Credits
 
-- **Images** : Unsplash
+- **Visuels destinations** : Generes en Session 1 (Midjourney / IA generative)
 - **Icones** : Lucide React
 - **Framework** : Next.js by Vercel
-- **IA** : Claude by Anthropic
+- **IA Code** : Claude Opus 4.5 by Anthropic
 
 ## Licence
 
