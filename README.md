@@ -15,7 +15,7 @@ Webapp interactive pour une agence de voyage temporel fictive, creee avec IA gen
 
 ## Stack Technique
 
-- **Framework** : Next.js 14 (App Router)
+- **Framework** : Next.js 16 (App Router)
 - **Langage** : TypeScript
 - **Styling** : Tailwind CSS
 - **Animations** : Framer Motion

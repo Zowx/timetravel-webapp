@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, Bot, User } from "lucide-react";
+import { MessageCircle, X, Send, Bot, User, Sparkles } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 interface Message {
@@ -11,97 +11,26 @@ interface Message {
   timestamp: Date;
 }
 
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
 const initialMessages: Message[] = [
   {
     id: 1,
-    text: "Bonjour ! Je suis l'assistant virtuel de TimeTravel Agency. Comment puis-je vous aider a planifier votre voyage temporel ?",
+    text: "Bonjour ! Je suis l'assistant IA de TimeTravel Agency. Comment puis-je vous aider a planifier votre voyage temporel ?",
     isBot: true,
     timestamp: new Date(),
   },
 ];
-
-const botResponses: Record<string, string> = {
-  paris:
-    "Paris 1889 est une destination fascinante ! Vous pourrez assister a l'inauguration de la Tour Eiffel lors de l'Exposition Universelle. Le forfait comprend : hebergement dans un hotel d'epoque, visite guidee de Paris, et acces VIP a l'Exposition. Prix : 12 500€ pour 3-7 jours.",
-  cretace:
-    "Le Cretace est notre aventure la plus extreme ! Vous observerez des dinosaures dans leur habitat naturel, en toute securite grace a nos bulles de protection temporelle. Ideal pour les amateurs de nature et d'aventure. Prix : 25 000€ pour 1-3 jours.",
-  florence:
-    "Florence 1504, l'apogee de la Renaissance ! Rencontrez Michel-Ange travaillant sur le David, visitez l'atelier de Leonard de Vinci, et assistez aux fetes des Medicis. Une immersion culturelle unique. Prix : 15 000€ pour 5-10 jours.",
-  prix: "Nos tarifs varient selon la destination : Paris 1889 (12 500€), Cretace (25 000€), Florence 1504 (15 000€). Tous les forfaits incluent le transport temporel, l'hebergement, et un guide expert.",
-  securite:
-    "Votre securite est notre priorite absolue. Nos capsules temporelles sont equipees de boucliers quantiques, et chaque voyageur est accompagne d'un guide forme. Nous avons un taux de satisfaction de 100% !",
-  reservation:
-    "Pour reserver, vous pouvez cliquer sur le bouton 'Reserver' en haut de page, ou me donner vos preferences et je vous guiderai dans le processus.",
-  default:
-    "Je serais ravi de vous aider ! Vous pouvez me poser des questions sur nos destinations (Paris 1889, Cretace, Florence 1504), les prix, la securite, ou comment reserver votre voyage temporel.",
-};
-
-function getBotResponse(message: string): string {
-  const lowerMessage = message.toLowerCase();
-
-  if (
-    lowerMessage.includes("paris") ||
-    lowerMessage.includes("1889") ||
-    lowerMessage.includes("eiffel")
-  ) {
-    return botResponses.paris;
-  }
-  if (
-    lowerMessage.includes("cretace") ||
-    lowerMessage.includes("dinosaure") ||
-    lowerMessage.includes("prehistoire")
-  ) {
-    return botResponses.cretace;
-  }
-  if (
-    lowerMessage.includes("florence") ||
-    lowerMessage.includes("renaissance") ||
-    lowerMessage.includes("1504")
-  ) {
-    return botResponses.florence;
-  }
-  if (
-    lowerMessage.includes("prix") ||
-    lowerMessage.includes("cout") ||
-    lowerMessage.includes("tarif") ||
-    lowerMessage.includes("combien")
-  ) {
-    return botResponses.prix;
-  }
-  if (
-    lowerMessage.includes("securite") ||
-    lowerMessage.includes("danger") ||
-    lowerMessage.includes("risque") ||
-    lowerMessage.includes("sur")
-  ) {
-    return botResponses.securite;
-  }
-  if (
-    lowerMessage.includes("reserver") ||
-    lowerMessage.includes("reservation") ||
-    lowerMessage.includes("commander")
-  ) {
-    return botResponses.reservation;
-  }
-  if (
-    lowerMessage.includes("bonjour") ||
-    lowerMessage.includes("salut") ||
-    lowerMessage.includes("hello")
-  ) {
-    return "Bonjour ! Bienvenue chez TimeTravel Agency. Quelle epoque vous fait rever ?";
-  }
-  if (lowerMessage.includes("merci")) {
-    return "Je vous en prie ! N'hesitez pas si vous avez d'autres questions. Bon voyage temporel !";
-  }
-
-  return botResponses.default;
-}
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -113,7 +42,7 @@ export default function Chatbot() {
   }, [messages]);
 
   const handleSend = async () => {
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() || isTyping) return;
 
     const userMessage: Message = {
       id: messages.length + 1,
@@ -122,21 +51,51 @@ export default function Chatbot() {
       timestamp: new Date(),
     };
 
+    const newChatHistory: ChatMessage[] = [
+      ...chatHistory,
+      { role: "user", content: inputValue },
+    ];
+
     setMessages((prev) => [...prev, userMessage]);
+    setChatHistory(newChatHistory);
     setInputValue("");
     setIsTyping(true);
 
-    // Simulate bot thinking
-    setTimeout(() => {
-      const botResponse: Message = {
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ messages: newChatHistory }),
+      });
+
+      const data = await response.json();
+
+      const botMessage: Message = {
         id: messages.length + 2,
-        text: getBotResponse(inputValue),
+        text: data.message,
         isBot: true,
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, botResponse]);
+
+      setMessages((prev) => [...prev, botMessage]);
+      setChatHistory((prev) => [
+        ...prev,
+        { role: "assistant", content: data.message },
+      ]);
+    } catch (error) {
+      console.error("Error:", error);
+      const errorMessage: Message = {
+        id: messages.length + 2,
+        text: "Desolee, une erreur est survenue. Veuillez reessayer.",
+        isBot: true,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -176,10 +135,11 @@ export default function Chatbot() {
                   <Bot className="w-6 h-6 text-[#d4af37]" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#0a0a0f]">
-                    Assistant TimeTravel
+                  <h3 className="font-bold text-[#0a0a0f] flex items-center gap-1">
+                    Assistant IA
+                    <Sparkles className="w-4 h-4" />
                   </h3>
-                  <p className="text-xs text-[#0a0a0f]/70">En ligne</p>
+                  <p className="text-xs text-[#0a0a0f]/70">Propulse par Groq</p>
                 </div>
               </div>
               <button
@@ -217,7 +177,9 @@ export default function Chatbot() {
                         : "bg-[#d4af37] text-[#0a0a0f] rounded-tr-none"
                     }`}
                   >
-                    <p className="text-sm leading-relaxed">{message.text}</p>
+                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                      {message.text}
+                    </p>
                   </div>
                 </motion.div>
               ))}
@@ -261,11 +223,12 @@ export default function Chatbot() {
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Posez votre question..."
-                  className="flex-1 bg-[#1f1f2e] text-white placeholder-gray-500 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-sm"
+                  disabled={isTyping}
+                  className="flex-1 bg-[#1f1f2e] text-white placeholder-gray-500 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-sm disabled:opacity-50"
                 />
                 <motion.button
                   onClick={handleSend}
-                  disabled={!inputValue.trim()}
+                  disabled={!inputValue.trim() || isTyping}
                   className="bg-[#d4af37] text-[#0a0a0f] p-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -274,8 +237,7 @@ export default function Chatbot() {
                 </motion.button>
               </div>
               <p className="text-xs text-gray-500 mt-2 text-center">
-                Essayez : &quot;Parle-moi de Paris 1889&quot; ou &quot;Quels
-                sont les prix ?&quot;
+                Propulse par IA - Posez n&apos;importe quelle question !
               </p>
             </div>
           </motion.div>
