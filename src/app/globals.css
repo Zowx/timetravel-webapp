@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
   --gold: #d4af37;
@@ -7,6 +10,25 @@
   --dark-bg: #0a0a0f;
   --dark-card: #12121a;
   --dark-border: #1f1f2e;
+  --radius: 0.625rem;
+  --background: #0a0a0f;
+  --foreground: #ffffff;
+  --card: #12121a;
+  --card-foreground: #ffffff;
+  --popover: #12121a;
+  --popover-foreground: #ffffff;
+  --primary: #d4af37;
+  --primary-foreground: #0a0a0f;
+  --secondary: #1f1f2e;
+  --secondary-foreground: #ffffff;
+  --muted: #1f1f2e;
+  --muted-foreground: #9ca3af;
+  --accent: #d4af37;
+  --accent-foreground: #0a0a0f;
+  --destructive: #ef4444;
+  --border: #1f1f2e;
+  --input: #1f1f2e;
+  --ring: #d4af37;
 }
 
 * {
@@ -106,4 +128,35 @@ body {
 
 .card-hover:hover {
   transform: translateY(-10px) scale(1.02);
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
 }

@@ -3,12 +3,22 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import {
-  Calendar,
+  Calendar as CalendarIcon,
   Users,
   MapPin,
   CheckCircle,
   AlertCircle,
 } from "lucide-react";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const destinations = [
   { id: "paris", name: "Paris 1889", price: 12500 },
@@ -19,13 +29,13 @@ const destinations = [
 export default function Reservation() {
   const [formData, setFormData] = useState({
     destination: "",
-    date: "",
     travelers: "1",
     name: "",
     email: "",
     phone: "",
     message: "",
   });
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -40,7 +50,7 @@ export default function Reservation() {
     const newErrors: Record<string, string> = {};
     if (!formData.destination)
       newErrors.destination = "Selectionnez une destination";
-    if (!formData.date) newErrors.date = "Selectionnez une date";
+    if (!selectedDate) newErrors.date = "Selectionnez une date";
     if (!formData.name) newErrors.name = "Entrez votre nom";
     if (!formData.email) newErrors.email = "Entrez votre email";
     else if (!/\S+@\S+\.\S+/.test(formData.email))
@@ -136,19 +146,48 @@ export default function Reservation() {
                     )}
                   </div>
 
-                  {/* Date */}
+                  {/* Date Picker with shadcn/ui */}
                   <div>
                     <label className="block text-sm text-gray-400 mb-2">
                       Date de depart *
                     </label>
-                    <input
-                      type="date"
-                      name="date"
-                      value={formData.date}
-                      onChange={handleChange}
-                      min={new Date().toISOString().split("T")[0]}
-                      className={`w-full bg-[#1f1f2e] border ${errors.date ? "border-red-500" : "border-[#2f2f4e]"} rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#d4af37] transition-colors`}
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal h-12 bg-[#1f1f2e] border-[#2f2f4e] hover:bg-[#2a2a3e] hover:border-[#d4af37] rounded-xl",
+                            !selectedDate && "text-gray-500",
+                            errors.date && "border-red-500",
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4 text-[#d4af37]" />
+                          {selectedDate ? (
+                            format(selectedDate, "dd MMMM yyyy", { locale: fr })
+                          ) : (
+                            <span>Choisir une date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-auto p-0 bg-[#12121a] border-[#2f2f4e]"
+                        align="start"
+                      >
+                        <Calendar
+                          mode="single"
+                          selected={selectedDate}
+                          onSelect={(date) => {
+                            setSelectedDate(date);
+                            if (errors.date) {
+                              setErrors((prev) => ({ ...prev, date: "" }));
+                            }
+                          }}
+                          locale={fr}
+                          disabled={{ before: new Date() }}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                     {errors.date && (
                       <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
                         <AlertCircle className="w-3 h-3" />
@@ -270,7 +309,7 @@ export default function Reservation() {
             <div className="lg:col-span-1">
               <div className="bg-[#12121a] rounded-2xl border border-[#1f1f2e] p-6 sticky top-24">
                 <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-[#d4af37]" />
+                  <CalendarIcon className="w-5 h-5 text-[#d4af37]" />
                   Recapitulatif
                 </h3>
 
@@ -292,11 +331,11 @@ export default function Reservation() {
                       <span>Voyageurs</span>
                       <span className="text-white">{formData.travelers}</span>
                     </div>
-                    {formData.date && (
+                    {selectedDate && (
                       <div className="flex justify-between text-gray-400">
                         <span>Date</span>
                         <span className="text-white">
-                          {new Date(formData.date).toLocaleDateString("fr-FR")}
+                          {format(selectedDate, "dd MMM yyyy", { locale: fr })}
                         </span>
                       </div>
                     )}
@@ -359,13 +398,13 @@ export default function Reservation() {
                 setIsSubmitted(false);
                 setFormData({
                   destination: "",
-                  date: "",
                   travelers: "1",
                   name: "",
                   email: "",
                   phone: "",
                   message: "",
                 });
+                setSelectedDate(undefined);
               }}
               className="btn-gold"
               whileHover={{ scale: 1.05 }}
