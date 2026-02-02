@@ -1,5 +1,5 @@
 import Header from "@/components/Header";
-import Hero from "@/components/Hero";
+import HeroVideoShowcase from "@/components/HeroVideoShowcase";
 import Destinations from "@/components/Destinations";
 import Quiz from "@/components/Quiz";
 import Reservation from "@/components/Reservation";
@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#0a0a0f] overflow-x-hidden">
       <Header />
-      <Hero />
+      <HeroVideoShowcase />
       <Destinations />
       <Quiz />
       <Reservation />

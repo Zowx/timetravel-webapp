@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import Image from "next/image";
 import { Sparkles, ArrowRight, RotateCcw } from "lucide-react";
 
 const questions = [
@@ -46,21 +47,21 @@ const questions = [
 const destinations = {
   paris: {
     name: "Paris 1889",
-    image: "/images/paris1889.png",
+    image: "/images/paris1889.webp",
     description:
       "La Belle Epoque vous attend ! Assistez a l'inauguration de la Tour Eiffel et vivez l'effervescence de l'Exposition Universelle.",
     price: "12 500",
   },
   cretace: {
     name: "Cretace -65M",
-    image: "/images/cretace.png",
+    image: "/images/cretace.webp",
     description:
       "Une aventure prehistorique unique ! Observez les dinosaures dans leur habitat naturel en toute securite.",
     price: "25 000",
   },
   florence: {
     name: "Florence 1504",
-    image: "/images/florence1504.png",
+    image: "/images/florence1504.webp",
     description:
       "Plongez dans la Renaissance italienne ! Rencontrez Michel-Ange et Leonard de Vinci a l'apogee de leur art.",
     price: "15 000",
@@ -220,11 +221,13 @@ export default function Quiz() {
 
                 {/* Result Image */}
                 <div className="relative h-48 rounded-xl overflow-hidden mb-6">
-                  <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{
-                      backgroundImage: `url('${destinations[result].image}')`,
-                    }}
+                  <Image
+                    src={destinations[result].image}
+                    alt={destinations[result].name}
+                    fill
+                    className="object-cover"
+                    priority={false}
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#12121a] to-transparent" />
                 </div>

@@ -1,7 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Calendar, MapPin, Clock, ArrowRight } from "lucide-react";
+import { Calendar, MapPin, Clock, ArrowRight, Play } from "lucide-react";
+import { useState } from "react";
+import Image from "next/image";
+import VideoModal from "./VideoModal";
 
 const destinations = [
   {
@@ -10,7 +13,8 @@ const destinations = [
     subtitle: "La Belle Epoque",
     description:
       "Vivez l'effervescence de l'Exposition Universelle et assistez a l'inauguration de la Tour Eiffel. Plongez dans le Paris de la fin du XIXe siecle.",
-    image: "/images/paris1889.png",
+    image: "/images/paris1889.webp",
+    video: "/images/video_paris1889.mp4",
     period: "XIXe siecle",
     duration: "3-7 jours",
     highlights: ["Tour Eiffel", "Exposition Universelle", "Moulin Rouge"],
@@ -22,7 +26,8 @@ const destinations = [
     subtitle: "-65 Millions d'annees",
     description:
       "Explorez un monde primitif peuple de dinosaures. Une aventure unique au coeur de la prehistoire, en toute securite.",
-    image: "/images/cretace.png",
+    image: "/images/cretace.webp",
+    video: "/images/video_cretace.mp4",
     period: "Prehistoire",
     duration: "1-3 jours",
     highlights: ["T-Rex", "Pterodactyles", "Nature primitive"],
@@ -34,7 +39,8 @@ const destinations = [
     subtitle: "La Renaissance",
     description:
       "Rencontrez les plus grands artistes de la Renaissance. De Michel-Ange a Leonard de Vinci, vivez l'age d'or de l'art italien.",
-    image: "/images/florence1504.png",
+    image: "/images/florence1504.webp",
+    video: "/images/video_florence1504.mp4",
     period: "Renaissance",
     duration: "5-10 jours",
     highlights: ["Michel-Ange", "Leonard de Vinci", "Medicis"],
@@ -43,6 +49,11 @@ const destinations = [
 ];
 
 export default function Destinations() {
+  const [selectedVideo, setSelectedVideo] = useState<{
+    src: string;
+    title: string;
+  } | null>(null);
+
   return (
     <section id="destinations" className="py-24 px-4">
       <div className="max-w-7xl mx-auto">
@@ -80,11 +91,29 @@ export default function Destinations() {
             >
               {/* Image */}
               <div className="relative h-64 overflow-hidden">
-                <div
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                  style={{ backgroundImage: `url('${dest.image}')` }}
+                <Image
+                  src={dest.image}
+                  alt={dest.title}
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  priority={false}
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#12121a] via-transparent to-transparent" />
+
+                {/* Play Button Overlay */}
+                <motion.button
+                  onClick={() =>
+                    setSelectedVideo({ src: dest.video, title: dest.title })
+                  }
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                >
+                  <div className="bg-[#d4af37] p-4 rounded-full hover:bg-[#e5c158] transition-colors">
+                    <Play className="w-8 h-8 text-[#0a0a0f] fill-current" />
+                  </div>
+                </motion.button>
 
                 {/* Price tag */}
                 <div className="absolute top-4 right-4 bg-[#d4af37] text-[#0a0a0f] px-4 py-2 rounded-full font-bold text-sm">
@@ -144,6 +173,14 @@ export default function Destinations() {
             </motion.div>
           ))}
         </div>
+
+        {/* Video Modal */}
+        <VideoModal
+          isOpen={!!selectedVideo}
+          videoSrc={selectedVideo?.src || ""}
+          title={selectedVideo?.title || ""}
+          onClose={() => setSelectedVideo(null)}
+        />
 
         {/* CTA */}
         <motion.div
