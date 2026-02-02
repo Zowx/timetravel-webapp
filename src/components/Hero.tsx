@@ -19,7 +19,7 @@ export default function Hero() {
   return (
     <section
       id="accueil"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
     >
       {/* Background Video/Image avec overlay */}
       <div className="absolute inset-0 z-0">

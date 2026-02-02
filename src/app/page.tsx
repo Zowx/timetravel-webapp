@@ -9,7 +9,7 @@ import Chatbot from "@/components/Chatbot";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#0a0a0f]">
+    <main className="min-h-screen bg-[#0a0a0f] overflow-x-hidden">
       <Header />
       <Hero />
       <Destinations />
