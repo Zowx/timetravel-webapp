@@ -8,7 +8,12 @@ import {
   MapPin,
   CheckCircle,
   AlertCircle,
+  CalendarDays,
 } from "lucide-react";
+import { DayPicker } from "react-day-picker";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import "react-day-picker/style.css";
 
 const destinations = [
   { id: "paris", name: "Paris 1889", price: 12500 },
@@ -19,13 +24,14 @@ const destinations = [
 export default function Reservation() {
   const [formData, setFormData] = useState({
     destination: "",
-    date: "",
     travelers: "1",
     name: "",
     email: "",
     phone: "",
     message: "",
   });
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [showCalendar, setShowCalendar] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -40,7 +46,7 @@ export default function Reservation() {
     const newErrors: Record<string, string> = {};
     if (!formData.destination)
       newErrors.destination = "Selectionnez une destination";
-    if (!formData.date) newErrors.date = "Selectionnez une date";
+    if (!selectedDate) newErrors.date = "Selectionnez une date";
     if (!formData.name) newErrors.name = "Entrez votre nom";
     if (!formData.email) newErrors.email = "Entrez votre email";
     else if (!/\S+@\S+\.\S+/.test(formData.email))
@@ -66,6 +72,14 @@ export default function Reservation() {
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+    setShowCalendar(false);
+    if (errors.date) {
+      setErrors((prev) => ({ ...prev, date: "" }));
     }
   };
 
@@ -136,19 +150,71 @@ export default function Reservation() {
                     )}
                   </div>
 
-                  {/* Date */}
-                  <div>
+                  {/* Date Picker */}
+                  <div className="relative">
                     <label className="block text-sm text-gray-400 mb-2">
                       Date de depart *
                     </label>
-                    <input
-                      type="date"
-                      name="date"
-                      value={formData.date}
-                      onChange={handleChange}
-                      min={new Date().toISOString().split("T")[0]}
-                      className={`w-full bg-[#1f1f2e] border ${errors.date ? "border-red-500" : "border-[#2f2f4e]"} rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#d4af37] transition-colors`}
-                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCalendar(!showCalendar)}
+                      className={`w-full bg-[#1f1f2e] border ${errors.date ? "border-red-500" : "border-[#2f2f4e]"} rounded-xl px-4 py-3 text-left text-white focus:outline-none focus:border-[#d4af37] transition-colors flex items-center justify-between`}
+                    >
+                      <span
+                        className={
+                          selectedDate ? "text-white" : "text-gray-500"
+                        }
+                      >
+                        {selectedDate
+                          ? format(selectedDate, "dd MMMM yyyy", { locale: fr })
+                          : "Choisir une date"}
+                      </span>
+                      <CalendarDays className="w-5 h-5 text-[#d4af37]" />
+                    </button>
+
+                    {showCalendar && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute z-50 mt-2 bg-[#12121a] border border-[#2f2f4e] rounded-xl shadow-2xl p-4"
+                      >
+                        <DayPicker
+                          mode="single"
+                          selected={selectedDate}
+                          onSelect={handleDateSelect}
+                          locale={fr}
+                          disabled={{ before: new Date() }}
+                          classNames={{
+                            root: "text-white",
+                            months: "flex flex-col",
+                            month: "space-y-4",
+                            caption:
+                              "flex justify-center pt-1 relative items-center text-[#d4af37] font-bold",
+                            caption_label: "text-sm font-medium",
+                            nav: "space-x-1 flex items-center",
+                            nav_button:
+                              "h-7 w-7 bg-[#1f1f2e] hover:bg-[#2f2f4e] rounded-lg flex items-center justify-center transition-colors",
+                            nav_button_previous: "absolute left-1",
+                            nav_button_next: "absolute right-1",
+                            table: "w-full border-collapse space-y-1",
+                            head_row: "flex",
+                            head_cell:
+                              "text-gray-500 rounded-md w-9 font-normal text-[0.8rem]",
+                            row: "flex w-full mt-2",
+                            cell: "text-center text-sm p-0 relative",
+                            day: "h-9 w-9 p-0 font-normal rounded-lg hover:bg-[#d4af37] hover:text-[#0a0a0f] transition-colors flex items-center justify-center",
+                            day_selected:
+                              "bg-[#d4af37] text-[#0a0a0f] font-bold",
+                            day_today: "border border-[#d4af37] text-[#d4af37]",
+                            day_outside: "text-gray-600 opacity-50",
+                            day_disabled:
+                              "text-gray-600 opacity-30 cursor-not-allowed hover:bg-transparent",
+                            day_hidden: "invisible",
+                          }}
+                        />
+                      </motion.div>
+                    )}
+
                     {errors.date && (
                       <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
                         <AlertCircle className="w-3 h-3" />
@@ -292,11 +358,11 @@ export default function Reservation() {
                       <span>Voyageurs</span>
                       <span className="text-white">{formData.travelers}</span>
                     </div>
-                    {formData.date && (
+                    {selectedDate && (
                       <div className="flex justify-between text-gray-400">
                         <span>Date</span>
                         <span className="text-white">
-                          {new Date(formData.date).toLocaleDateString("fr-FR")}
+                          {format(selectedDate, "dd MMM yyyy", { locale: fr })}
                         </span>
                       </div>
                     )}
@@ -359,13 +425,13 @@ export default function Reservation() {
                 setIsSubmitted(false);
                 setFormData({
                   destination: "",
-                  date: "",
                   travelers: "1",
                   name: "",
                   email: "",
                   phone: "",
                   message: "",
                 });
+                setSelectedDate(undefined);
               }}
               className="btn-gold"
               whileHover={{ scale: 1.05 }}
