@@ -2,12 +2,9 @@
 
 Webapp interactive pour une agence de voyage temporel fictive, creee avec IA generative dans le cadre du projet supervise IA M1/M2.
 
-## Equipe
+## Auteur
 
-- [Nom 1]
-- [Nom 2]
-- [Nom 3]
-- [Nom 4]
+- **Enzo MORIN**
 
 ## Demo
 
@@ -62,12 +59,11 @@ Webapp interactive pour une agence de voyage temporel fictive, creee avec IA gen
 
 ## IA Utilisees
 
-| Outil | Usage |
-|-------|-------|
-| Claude Code (Opus 4.5) | Generation du code complet |
-| Next.js | Framework React |
-| Framer Motion | Animations |
-| Tailwind CSS | Styling |
+| Outil IA | Usage |
+|----------|-------|
+| **Claude Code (Opus 4.5)** | Generation du code complet de la webapp |
+| **Groq API (Llama 3.1 8B)** | Chatbot conversationnel en temps reel |
+| **Microsoft Copilot** | Generation des visuels destinations (Session 1) |
 
 ## Installation locale
 
@@ -125,7 +121,7 @@ timetravel-webapp/
 
 ## Prompts utilises
 
-### Prompt principal pour la generation
+### Prompt 1 - Generation initiale de la webapp
 ```
 Creer une webapp pour une agence de voyage temporel avec :
 - Landing page elegante dark mode avec accents dores
@@ -135,12 +131,75 @@ Creer une webapp pour une agence de voyage temporel avec :
 - Design premium et professionnel
 ```
 
-### Prompt pour le chatbot
+### Prompt 2 - Personnalite du chatbot (system prompt)
 ```
 Tu es l'assistant virtuel de TimeTravel Agency, une agence de voyage temporel de luxe.
 Ton role : conseiller les clients sur les meilleures destinations temporelles.
-Tu connais parfaitement : Paris 1889, Cretace -65M, Florence 1504
+
+Ton ton :
+- Professionnel mais chaleureux
+- Passionne d'histoire
+- Toujours enthousiaste sans etre trop familier
+
+Tu connais parfaitement :
+- Paris 1889 (Belle Epoque, Tour Eiffel, 12 500€, 3-7 jours)
+- Cretace -65M (dinosaures, 25 000€, 1-3 jours, securite maximale)
+- Florence 1504 (Renaissance, Michel-Ange, 15 000€, 5-10 jours)
 ```
+
+### Prompt 3 - Ajout des animations
+```
+Ajoute des animations subtiles et elegantes :
+- Fade-in progressif des sections au scroll
+- Animation du titre en hero (apparition progressive)
+- Hover effects sur les cards de destinations
+- Transition douce entre les pages
+Style : animations fluides, duree 0.6-0.8s, easing natural
+Utilise Framer Motion pour React.
+```
+
+### Prompt 4 - Quiz de recommandation
+```
+Cree un quiz interactif de 4 questions pour recommander une destination :
+- Question 1 : Style de voyage prefere (aventure/culture/romantique)
+- Question 2 : Rapport au danger (prudent/modere/aventurier)
+- Question 3 : Interet principal (art/nature/histoire)
+- Question 4 : Duree souhaitee (court/moyen/long)
+Algorithme de scoring pour matcher avec Paris 1889, Cretace ou Florence 1504.
+```
+
+### Prompt 5 - Formulaire de reservation
+```
+Cree un formulaire de reservation complet avec :
+- Selection destination (dropdown avec prix)
+- Date picker pour date de depart
+- Nombre de voyageurs (1-6)
+- Coordonnees : nom, email, telephone
+- Message optionnel
+- Validation en temps reel
+- Recapitulatif avec calcul du prix total (prix x voyageurs)
+- Message de confirmation apres envoi
+```
+
+## Reflexion sur le processus
+
+### Methode de travail
+Le projet a ete realise en utilisant une approche "vibe coding" avec Claude Code (Opus 4.5) comme assistant principal. Cette methode permet de generer rapidement du code fonctionnel tout en gardant le controle sur l'architecture et les choix techniques.
+
+### Points positifs de l'IA generative
+- **Rapidite** : Generation de composants React complets en quelques minutes
+- **Coherence** : Le code genere suit les bonnes pratiques (TypeScript strict, composants modulaires)
+- **Iteration** : Possibilite d'affiner le design et les fonctionnalites par prompts successifs
+
+### Defis rencontres
+- **Contexte** : Necessaire de bien decrire le contexte pour obtenir des resultats pertinents
+- **Integration assets** : Les images et videos de la Session 1 ont necessite une adaptation manuelle des chemins
+- **API Chatbot** : Configuration de Groq avec fallback pour les environnements sans cle API
+
+### Apprentissages
+- L'IA est un excellent accelerateur mais ne remplace pas la comprehension du code
+- Les prompts precis et structures donnent de meilleurs resultats
+- La combinaison d'outils (Claude Code + Vercel) optimise le workflow
 
 ## Credits
 
@@ -155,4 +214,4 @@ Projet pedagogique - M1/M2 Digital & IA
 
 ---
 
-Fait avec ❤️ par l'equipe TimeTravel
+Fait avec ❤️ par Enzo MORIN
