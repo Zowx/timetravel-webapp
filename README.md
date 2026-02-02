@@ -144,7 +144,7 @@ Tu connais parfaitement : Paris 1889, Cretace -65M, Florence 1504
 
 ## Credits
 
-- **Visuels destinations** : Generes en Session 1 (Midjourney / IA generative)
+- **Visuels destinations** : Generes en Session 1 (Microsoft Copilot)
 - **Icones** : Lucide React
 - **Framework** : Next.js by Vercel
 - **IA Code** : Claude Opus 4.5 by Anthropic
